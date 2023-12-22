@@ -18,8 +18,13 @@
 
 В данном репозитории представлен блок экспериментов в Google Colab (/experiments). 
 
-Основная модель находится hrai_model.py
-Веса для модели находятся в файле weights. 
+Основная модель находится hrai_model_transformer.py
+Веса для модели находятся в файле best_model.pth. 
+
+Таким образом обучен трансформер на малой выборке. 10% от общей, но показал хорошие результаты. 
+Предлагаем эту модель к использованию. 
+
+По ссылке в презентации есть пайплайн для обучения трансформера.
 
 
 ## Как это работает
@@ -27,8 +32,18 @@
 Модель использует следующую структуру данных для каждого пользователя:
 
 - История покупок
-- Активность на сайте
+  ['food' 'electronics' 'bank' 'other' 'media' 'travel' 'shoes' 'fashion'
+ 'entertainment services' 'hypermarket' 'furniture' 'health' 'pets' 'kids'
+ 'education' 'insurance' 'cosmetics' nan 'gifts' 'luxury'
+ 'household appliances' 'deal of the day' 'sport' 'software']
 
+- Активность на сайте
+  - total_visits - всего посещений сайта
+  - average_session - средняя сессия длительность
+  - pages_count - количество просмотренных страниц
+  - visit_interval - время между повторными визитами
+
+  
 На основе этих данных модель проводит анализ и определяет пол пользователя.
 
 ## Установка и Запуск
@@ -39,28 +54,36 @@
 git clone [ссылка на репозиторий]
 cd [название репозитория]
 pip install -r requirements.txt
-python hrai_model.py
+python hrai_model_transformer.py
 ```
 
 ## Использование
-Для использования модели отправьте POST-запрос на наш сервер
-с данными пользователя в формате JSON
+Для использования модели отправьте запрос 
+с данными пользователя в формате вектора pytorch
 ```bash
-{
-  "age": 25,
-  "city": "Москва",
-  "education": "Высшее",
-  "profession": "Инженер",
-  "interests": ["Технологии", "Книги", "Путешествия"],
-  "purchase_history": ["Книги", "Электроника"],
-  "online_activity": ["social_media", "e-commerce"]
-}
+model_path = 'best_model.pth'  # Путь к сохраненной модели
+input_size = 23
+num_classes = 2
+num_heads = 2
+num_layers = 2
+new_embed_dim = 24
+model = load_model(model_path, input_size, num_classes, num_heads, num_layers, new_embed_dim)
+
+# Пример входного вектора данных
+example_input = np.random.rand(input_size)  # Случайный вектор
+
+# Выполнение предсказания
+prediction = predict(model, example_input)
+print("Результат предсказания:", prediction)
 ```
 
 ## Команда & Контакты
-Артем Аментес  artem.amentes@yandex.ru
-Анатолий Ржевский
-Артем Фомкин
+Артем Аментес  artem.amentes@yandex.ru 
+
+Анатолий Ржевский 
+
+Артем Фомкин 
+
 
 
 
